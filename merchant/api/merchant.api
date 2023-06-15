@@ -1,0 +1,135 @@
+syntax = "v1"
+
+info(
+    title: "type title here"
+    desc: "type desc here"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+type APIEncryptData {
+    Version string `json:"version, optional"`
+    MerchantId string `json:"merchantId, optional" validate:"required"`
+    Data string `json:"data, optional" validate:"required"` // 请求数据, 以密文形式传输，加密前为JSON字符串
+    MyIp string `json:"myIp, optional"`
+}
+
+type APIEncryptRespData {
+    Version string `json:"version"`
+    MerchantId string `json:"merchantId"`
+    RespCode string `json:"respCode"`
+    RespMsg string `json:"respMsg"`
+    Data string `json:"data"`
+}
+
+type AutoSignUpMerchantBO {
+    AgentMerchantCoding string `json:"agentMerchantCoding"`
+    LoginName string `json:"loginName"`
+    Mailbox string `json:"mailbox"`
+    PhoneNumber string `json:"phoneNumber"`
+    CommunicationSoftware string `json:"communicationSoftware"`
+    CommunicationSoftwareNickname string `json:"communicationSoftwareNickname"`
+    ServerIps []string `json:"serverIps"`
+    LoginIps []string `json:"loginIps"`
+    MerchantCompanyName string `json:"merchantCompanyName"`
+    MappingKey string `json:"mappingKey"`
+    Sign string `json:"sign"`
+}
+
+type MerchantQueryChannelRequest {
+    MerchantId string `json:"merchantId"`
+    Currency   string `json:"currency"`
+    PayType    string `json:"payType"`
+    Device     string `json:"device, optional"`
+}
+
+type MerchantQueryChannelPayMethod {
+    CurrencyCoding string `json:"currencyCoding"`
+    PayType string `json:"payType"`
+    PayTypeName string `json:"payTypeName"`
+    ChannelCoding string `json:"channelCoding"`
+    ChannelName string `json:"channelName"`
+    SingleLimitMinimum float64 `json:"singleLimitMinimum"`
+    SingleLimitMaxmum float64 `json:"singleLimitMaxmum"`
+    Fixed string `json:"fixed"`
+    PayTypeNo string `json:"payTypeNo"`
+    PayTypeImageUrl string `json:"payTypeImageUrl"`
+    Device string `json:"device"`
+}
+
+type MerchantQueryChannelResponse {
+    RespCode string `json:"respCode"`
+    RespMsg string `json:"respMsg"`
+    Status int64 `json:"status"`
+    Data []MerchantQueryChannelPayMethod `json:"data"`
+}
+
+type AutoSignUpRespDTO {
+    AgentMerchantCoding string `json:"agentMerchantCoding"`
+    MappingKey string `json:"mappingKey"`
+    MerchantId string `json:"merchantId"`
+    MerchantKey string `json:"merchantKey"`
+    MerchantApiUrl string `json:"merchantApiUrl"`
+    Sign string `json:"sign"`
+}
+
+type QueryMerchantBO {
+    MerchantId string `json:"merchantId"`
+    Sign string `json:"sign"`
+}
+
+type QueryMerchantDTO {
+    MerchantId string `json:"merchantId"`
+    loginName string `json:"loginName"`
+    mailbox string `json:"mailbox"`
+    phoneNumber string `json:"phoneNumber"`
+    communicationSoftware string `json:"communicationSoftware"`
+    communicationSoftwareNickname string `json:"communicationSoftwareNickname"`
+    loginIps string `json:" loginIps"`
+    merchantCompanyName string `json:"merchantCompanyName"`
+    password string `json:"password"`
+    merchantOperatingWebsite string `json:"merchantOperatingWebsite"`
+    merchantTestAccount string `json:"merchantTestAccount"`
+    merchantTestPassword string `json:"merchantTestPassword"`
+    merchantKey string `json:"merchantKey"`
+    Sign string `json:"sign"`
+}
+
+type MerchantQueryOrderStatementRequest {
+    MerchantId string `json:"merchantId" valiate: "required"`
+    Currency string `json:"currency" valiate: "required"`
+    StartAt string `json:"startAt" valiate: "required"`
+    EndAt string `json:"endAt" valiate: "required"`
+    Sign string `json:"sign" valiate: "required"`
+}
+
+type MerchantQueryOrderStatementResponse {
+    RespCode string `json:"respCode"`
+    RespMsg string `json:"respMsg"`
+    PayOrderNum int64 `json:"payOrderNum"`
+    PayOrderAmount float64 `json:"payOrderAmount"`
+    PayOrderHandlingFee float64 `json:"payOrderHandlingFee"`
+    ProxyPayOrderNum int64 `json:"proxyPayOrderNum"`
+    ProxyPayOrderAmount float64 `json:"proxyPayOrderAmount"`
+    ProxyPayOrderHandlingFee float64 `json:"proxyPayOrderHandlingFee"`
+    Sign string `json:"sign"`
+}
+
+@server(
+    group: merchant
+    prefix: dior/merchant-api
+)
+service merchant-api {
+    @handler CreateMerchantHandler
+    post /create-merchant-api (APIEncryptData) returns (APIEncryptRespData)
+
+    @handler QueryMerchantHandler
+    post /query-merchant-api (APIEncryptData) returns (APIEncryptRespData)
+
+    @handler MerchantQueryChannelHandler
+    post /query-channel-by-paytype (MerchantQueryChannelRequest) returns (MerchantQueryChannelResponse)
+
+    @handler MerchantQueryOrderStatementHandler
+    post /query-order-statement (MerchantQueryOrderStatementRequest) returns (MerchantQueryOrderStatementResponse)
+}
